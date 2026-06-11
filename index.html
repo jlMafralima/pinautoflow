@@ -601,22 +601,25 @@
         <div id="tab-manual">
           <div class="card">
             <div class="card-title">🖼 <span>Imagens do Pin</span></div>
-            <div class="upload-zone" id="uploadZone"
-                 onclick="document.getElementById('imgInput').click()"
-                 ondragover="onDragOver(event)"
-                 ondragleave="onDragLeave(event)"
-                 ondrop="onDrop(event)">
-              <input type="file" id="imgInput" accept="image/*" multiple onchange="handleImages(event)" style="display:none">
-              <div class="upload-icon" id="uploadIcon">📷</div>
-              <div class="upload-label" id="uploadLabel"><strong>Clique ou arraste</strong> imagens aqui<br><span style="font-size:11px">Até 500 imagens · JPG, PNG, WEBP</span></div>
+            <div style="background:rgba(230,0,35,.07);border:1px solid rgba(230,0,35,.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:13px;color:#ccc9c2">
+              <strong style="color:var(--text)">📌 Como adicionar imagens:</strong><br>
+              1. Acesse <a href="https://imgur.com/upload" target="_blank" style="color:var(--pin-red)">imgur.com/upload</a> e faça upload das suas fotos<br>
+              2. Clique na imagem → botão direito → <strong>Copiar endereço da imagem</strong><br>
+              3. Cole as URLs abaixo (uma por linha)
             </div>
-            <div class="upload-progress" id="uploadProgress"></div>
-            <div id="galleryWrapper" style="display:none">
+            <div class="form-group">
+              <label>URLs das imagens (uma por linha — até 500)</label>
+              <textarea id="imgUrls" rows="6" placeholder="https://i.imgur.com/abc123.jpg&#10;https://i.imgur.com/def456.jpg&#10;https://i.imgur.com/ghi789.png"></textarea>
+            </div>
+            <div id="urlPreviewGallery" style="display:none">
               <div class="img-gallery-header">
-                <span id="galleryCount">0 imagens carregadas</span>
-                <button onclick="clearImages()">✕ Limpar todas</button>
+                <span id="urlCount">0 URLs adicionadas</span>
+                <button onclick="document.getElementById('imgUrls').value='';renderUrlPreview()">✕ Limpar</button>
               </div>
-              <div class="img-gallery" id="imgGallery"></div>
+              <div class="img-gallery" id="urlGallery"></div>
+            </div>
+            <div style="margin-top:10px">
+              <button class="btn-ghost" onclick="renderUrlPreview()" style="font-size:13px;padding:8px 14px">👁 Pré-visualizar imagens</button>
             </div>
           </div>
 
@@ -1017,104 +1020,35 @@ function updateConnectionUI() {
   }
 }
 
-// ── Image (multi, up to 500) ──
-const MAX_IMAGES = 500;
-state._images = state._images || []; // [{dataUrl, name}]
-
-function onDragOver(e) {
-  e.preventDefault();
-  document.getElementById('uploadZone').classList.add('drag-over');
-}
-function onDragLeave(e) {
-  document.getElementById('uploadZone').classList.remove('drag-over');
-}
-function onDrop(e) {
-  e.preventDefault();
-  document.getElementById('uploadZone').classList.remove('drag-over');
-  processFiles(e.dataTransfer.files);
+// ── Image URLs (Imgur-based, up to 500) ──
+function getImageUrls() {
+  const raw = document.getElementById('imgUrls').value.trim();
+  if (!raw) return [];
+  return raw.split('\n')
+    .map(u => u.trim())
+    .filter(u => u.startsWith('http'))
+    .slice(0, 500);
 }
 
-function handleImages(e) {
-  processFiles(e.target.files);
-  e.target.value = ''; // reset so same files can be re-added
-}
+function renderUrlPreview() {
+  const urls = getImageUrls();
+  const wrapper = document.getElementById('urlPreviewGallery');
+  const gallery = document.getElementById('urlGallery');
+  const count = document.getElementById('urlCount');
 
-function processFiles(files) {
-  const remaining = MAX_IMAGES - state._images.length;
-  if (remaining <= 0) { toast(`Limite de ${MAX_IMAGES} imagens atingido`, 'error'); return; }
-
-  const toLoad = Array.from(files).slice(0, remaining);
-  if (files.length > remaining) toast(`Apenas ${remaining} imagem(ns) adicionada(s) — limite de ${MAX_IMAGES}`, 'error');
-
-  const progress = document.getElementById('uploadProgress');
-  progress.classList.add('show');
-
-  let loaded = 0;
-  toLoad.forEach((file, i) => {
-    if (!file.type.startsWith('image/')) { loaded++; updateProgress(loaded, toLoad.length); return; }
-    const reader = new FileReader();
-    reader.onload = ev => {
-      state._images.push({ dataUrl: ev.target.result, name: file.name });
-      loaded++;
-      updateProgress(loaded, toLoad.length);
-      if (loaded === toLoad.length) {
-        progress.classList.remove('show');
-        renderGallery();
-      }
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function updateProgress(done, total) {
-  const el = document.getElementById('uploadProgress');
-  el.textContent = `Carregando… ${done} / ${total}`;
-}
-
-function renderGallery() {
-  const images = state._images;
-  const wrapper = document.getElementById('galleryWrapper');
-  const gallery = document.getElementById('imgGallery');
-  const count = document.getElementById('galleryCount');
-
-  if (!images.length) {
+  if (!urls.length) {
     wrapper.style.display = 'none';
-    document.getElementById('uploadIcon').textContent = '📷';
-    document.getElementById('uploadLabel').innerHTML = '<strong>Clique ou arraste</strong> imagens aqui<br><span style="font-size:11px">Até 500 imagens · JPG, PNG, WEBP</span>';
     return;
   }
 
   wrapper.style.display = 'block';
-  count.textContent = `${images.length} imagem(ns) carregada(s)`;
-  document.getElementById('uploadIcon').textContent = '✅';
-  document.getElementById('uploadLabel').innerHTML = `<strong style="color:var(--success)">${images.length} imagens prontas</strong><br><span style="font-size:11px">Clique para adicionar mais</span>`;
-
-  gallery.innerHTML = images.map((img, idx) => `
-    <div class="img-thumb-wrap ${idx === 0 ? 'selected' : ''}" onclick="selectImage(${idx})" id="thumb-${idx}">
-      <img src="${img.dataUrl}" alt="${img.name}" loading="lazy">
+  count.textContent = `${urls.length} URL(s) adicionada(s)`;
+  gallery.innerHTML = urls.map((url, idx) => `
+    <div class="img-thumb-wrap" id="thumb-${idx}">
+      <img src="${url}" alt="img ${idx+1}" loading="lazy" onerror="this.parentElement.style.opacity='.3'">
       <span class="img-thumb-num">${idx + 1}</span>
-      <button class="img-thumb-del" onclick="removeImage(event, ${idx})">✕</button>
     </div>
   `).join('');
-}
-
-function selectImage(idx) {
-  document.querySelectorAll('.img-thumb-wrap').forEach(el => el.classList.remove('selected'));
-  const el = document.getElementById('thumb-' + idx);
-  if (el) el.classList.add('selected');
-  state._selectedImageIdx = idx;
-}
-
-function removeImage(e, idx) {
-  e.stopPropagation();
-  state._images.splice(idx, 1);
-  renderGallery();
-}
-
-function clearImages() {
-  state._images = [];
-  state._selectedImageIdx = 0;
-  renderGallery();
 }
 
 // ── Create Pin ──
@@ -1125,9 +1059,8 @@ function schedulePin() {
   if (!title) { toast('Preencha o título do Pin', 'error'); return; }
   if (!dt) { toast('Selecione data e hora', 'error'); return; }
 
-  const images = state._images || [];
+  const images = getImageUrls();
   if (images.length === 0) {
-    // Allow no image — Pinterest supports text-only Idea Pins
     const pin = {
       id: Date.now(), title, desc,
       link: document.getElementById('pinLink').value,
@@ -1136,9 +1069,8 @@ function schedulePin() {
     };
     state.queue.push(pin);
   } else {
-    // Create one scheduled pin per image, spaced 1 min apart
     const baseTime = new Date(dt);
-    images.forEach((img, i) => {
+    images.forEach((imgUrl, i) => {
       const t = new Date(baseTime.getTime() + i * 60000);
       state.queue.push({
         id: Date.now() + i,
@@ -1146,7 +1078,7 @@ function schedulePin() {
         desc, link: document.getElementById('pinLink').value,
         board: document.getElementById('pinBoard').value,
         datetime: t.toISOString().slice(0,16),
-        image: img.dataUrl, status: 'scheduled', type: 'manual'
+        image: imgUrl, status: 'scheduled', type: 'manual'
       });
     });
   }
@@ -1178,7 +1110,7 @@ async function publishNow() {
   const spinner = document.getElementById('pubSpinner');
   spinner.classList.add('show');
 
-  const images = state._images || [];
+  const images = getImageUrls();
   const count = images.length || 1;
   let successCount = 0;
   let lastError = null;
@@ -1208,9 +1140,9 @@ async function publishNow() {
         lastError = data.message || data.code || JSON.stringify(data);
       }
     } else {
-      // Publica cada imagem como um Pin separado
+      // Publica cada URL como um Pin separado
       for (let i = 0; i < images.length; i++) {
-        const img = images[i];
+        const imgUrl = images[i];
         const pinTitle = images.length > 1 ? `${title} (${i+1}/${images.length})` : title;
         const body = {
           board_id: boardId,
@@ -1218,12 +1150,11 @@ async function publishNow() {
           description: desc,
           link: link || undefined,
           media_source: {
-            source_type: 'image_base64',
-            content_type: img.name && img.name.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg',
-            data: img.dataUrl.split(',')[1]
+            source_type: 'image_url',
+            url: imgUrl
           }
         };
-        const res = await pinFetch('https://api.pinterest.com/v5/pins', {
+        const res = await fetch('https://api.pinterest.com/v5/pins', {
           method: 'POST',
           headers: {
             'Authorization': 'Bearer ' + token,
@@ -1234,12 +1165,11 @@ async function publishNow() {
         const data = await res.json();
         if (res.ok) {
           successCount++;
-          state.queue.unshift({ id: Date.now() + i, title: pinTitle, desc, image: img.dataUrl, status: 'posted', type: 'manual', datetime: new Date().toISOString() });
+          state.queue.unshift({ id: Date.now() + i, title: pinTitle, desc, image: imgUrl, status: 'posted', type: 'manual', datetime: new Date().toISOString() });
         } else {
           lastError = data.message || data.code || JSON.stringify(data);
           console.error('Erro no pin ' + (i+1), data);
         }
-        // Pequena pausa entre pins para não sobrecarregar a API
         if (i < images.length - 1) await new Promise(r => setTimeout(r, 500));
       }
     }
@@ -1263,12 +1193,14 @@ async function publishNow() {
 }
 
 function clearForm() {
-  ['pinTitle','pinDesc','pinLink'].forEach(id => document.getElementById(id).value = '');
+  ['pinTitle','pinDesc','pinLink','imgUrls'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
   document.getElementById('pinBoard').value = '';
   document.getElementById('pinDateTime').value = '';
-  state._images = [];
-  state._selectedImageIdx = 0;
-  renderGallery();
+  const wrapper = document.getElementById('urlPreviewGallery');
+  if (wrapper) wrapper.style.display = 'none';
 }
 
 // ── AI Generator ──
@@ -1479,25 +1411,9 @@ async function saveConfig() {
   toast('Configurações salvas ✓', 'success');
 }
 
-// ── Pinterest API helper via Netlify Function ──
+// ── Pinterest API helper (chamada direta — image_url não tem CORS) ──
 async function pinFetch(url, options = {}) {
-  const token = state.accessToken || (state.config && state.config.token);
-  const method = options.method || 'GET';
-  const payload = options.body ? JSON.parse(options.body) : null;
-
-  const res = await fetch('/.netlify/functions/pinterest', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ url, method, token, payload })
-  });
-
-  const result = await res.json();
-
-  return {
-    ok: result.status >= 200 && result.status < 300,
-    status: result.status,
-    json: async () => result.data
-  };
+  return fetch(url, options);
 }
 
 async function loadBoards() {
