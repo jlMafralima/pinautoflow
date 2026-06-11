@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PinFlow — Política de Privacidade & Finalidade</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f10;
+    --surface: #1a1a1d;
+    --surface2: #242428;
+    --border: #2e2e34;
+    --pin-red: #e60023;
+    --text: #f0eee8;
+    --muted: #888890;
+    --success: #4caf84;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo-mark { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-icon {
+    width: 30px; height: 30px; background: var(--pin-red);
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 16px; color: #fff; font-weight: 700;
+  }
+  .logo-text { font-family: var(--font-display); font-size: 20px; color: var(--text); }
+  .logo-text span { color: var(--pin-red); }
+  .header-date { font-size: 12px; color: var(--muted); }
+
+  /* ── Nav tabs ── */
+  .page-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    padding: 0 40px;
+  }
+  .page-tab {
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all .15s;
+    user-select: none;
+  }
+  .page-tab:hover { color: var(--text); }
+  .page-tab.active { color: var(--text); border-bottom-color: var(--pin-red); }
+
+  /* ── Content ── */
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── Hero ── */
+  .page-hero {
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--pin-red);
+    margin-bottom: 10px;
+  }
+  .page-hero h1 {
+    font-family: var(--font-display);
+    font-size: 36px;
+    letter-spacing: -.5px;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .page-hero p { color: var(--muted); font-size: 15px; max-width: 560px; }
+
+  /* ── Sections ── */
+  .doc-section { margin-bottom: 36px; }
+  .doc-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .doc-section p { color: #ccc9c2; margin-bottom: 10px; font-size: 14.5px; }
+  .doc-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+  }
+  .doc-section ul li {
+    padding: 6px 0 6px 20px;
+    position: relative;
+    color: #ccc9c2;
+    font-size: 14.5px;
+  }
+  .doc-section ul li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--pin-red);
+    font-size: 11px;
+    top: 9px;
+  }
+
+  /* ── Info boxes ── */
+  .info-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    font-size: 14px;
+    color: #ccc9c2;
+  }
+  .info-box.green { border-color: rgba(76,175,132,.3); background: rgba(76,175,132,.07); }
+  .info-box.red { border-color: rgba(230,0,35,.3); background: rgba(230,0,35,.07); }
+  .info-box strong { color: var(--text); }
+
+  /* ── Permission table ── */
+  .perm-table { width: 100%; border-collapse: collapse; margin: 14px 0; }
+  .perm-table th {
+    text-align: left; font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .05em;
+    color: var(--muted); padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .perm-table td {
+    padding: 10px 12px; font-size: 14px;
+    color: #ccc9c2; border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .perm-table tr:last-child td { border-bottom: none; }
+  .badge-yes { color: var(--success); font-weight: 600; }
+  .badge-no { color: var(--muted); }
+
+  /* ── Contact ── */
+  .contact-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .contact-icon { font-size: 28px; }
+  .contact-label { font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+  .contact-value { font-size: 14px; font-weight: 500; color: var(--text); }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 20px 40px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 16px 20px; }
+    .page-nav { padding: 0 16px; }
+    .container { padding: 28px 16px 60px; }
+    .page-hero h1 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo-mark" href="#">
+    <div class="logo-icon">P</div>
+    <span class="logo-text">Pin<span>Flow</span></span>
+  </a>
+  <span class="header-date">Atualizado em junho de 2025</span>
+</header>
+
+<nav class="page-nav">
+  <div class="page-tab active" onclick="showSection('finalidade')">📋 Finalidade do App</div>
+  <div class="page-tab" onclick="showSection('politica')">🔒 Política de Privacidade</div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     FINALIDADE
+════════════════════════════════════════ -->
+<div class="section active" id="sec-finalidade">
+  <div class="container">
+    <div class="page-hero">
+      <div class="page-eyebrow">📋 Finalidade do Aplicativo</div>
+      <h1>O que o PinFlow faz</h1>
+      <p>Descrição oficial da finalidade e uso das permissões do aplicativo PinFlow junto à API do Pinterest.</p>
+    </div>
+
+    <div class="doc-section">
+      <h2>🎯 Descrição do Aplicativo</h2>
+      <p>O <strong>PinFlow</strong> é uma ferramenta de automação de marketing para o Pinterest. Seu objetivo é permitir que criadores de conteúdo, blogueiros e empresas gerenciem e publiquem Pins de forma eficiente, seja manualmente, de forma agendada ou automaticamente a partir de fontes RSS.</p>
+      <p>O aplicativo é destinado exclusivamente ao uso pelo próprio titular da conta Pinterest autenticada, nunca atuando em nome de terceiros sem consentimento.</p>
+    </div>
+
+    <div class="doc-section">
+      <h2>⚙️ Funcionalidades Principais</h2>
+      <ul>
+        <li><strong>Criação de Pins:</strong> o usuário cria Pins com imagem, título, descrição e link de destino diretamente pelo PinFlow.</li>
+        <li><strong>Agendamento:</strong> os Pins podem ser agendados para publicação em data e hora específicas, de forma automática.</li>
+        <li><strong>Publicação em lote:</strong> suporte ao upload de até 500 imagens por vez, gerando múltiplos Pins com um único fluxo de trabalho.</li>
+        <li><strong>Gerador de conteúdo com IA:</strong> uso de inteligência artificial para sugerir títulos, descrições e hashtags otimizadas para SEO no Pinterest.</li>
+        <li><strong>Automação via RSS:</strong> monitoramento de feeds RSS de blogs e sites para publicar automaticamente novos conteúdos no Pinterest.</li>
+        <li><strong>Gerenciamento de Boards:</strong> leitura e seleção dos quadros (boards) da conta autenticada para organizar os Pins publicados.</li>
+      </ul>
+    </div>
+
+    <div class="doc-section">
+      <h2>🔐 Permissões Solicitadas à API do Pinterest</h2>
+      <p>O PinFlow solicita apenas as permissões estritamente necessárias para seu funcionamento:</p>
+      <table class="perm-table">
+        <thead>
+          <tr>
+            <th>Permissão (Scope)</th>
+            <th>Para que é usada</th>
+            <th>Necessária</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>pins:write</code></td>
+            <td>Criar e publicar novos Pins na conta do usuário</td>
+            <td class="badge-yes">✓ Sim</td>
+          </tr>
+          <tr>
+            <td><code>pins:read</code></td>
+            <td>Listar Pins existentes para evitar duplicatas</td>
+            <td class="badge-yes">✓ Sim</td>
+          </tr>
+          <tr>
+            <td><code>boards:read</code></td>
+            <td>Listar os quadros da conta para o usuário escolher onde publicar</td>
+            <td class="badge-yes">✓ Sim</td>
+          </tr>
+          <tr>
+            <td><code>boards:write</code></td>
+            <td>Não solicitado</td>
+            <td class="badge-no">✗ Não</td>
+          </tr>
+          <tr>
+            <td><code>user_accounts:read</code></td>
+            <td>Exibir nome e foto da conta conectada na interface</td>
+            <td class="badge-yes">✓ Sim</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="doc-section">
+      <h2>👤 Público-alvo</h2>
+      <ul>
+        <li>Criadores de conteúdo que desejam automatizar a presença no Pinterest</li>
+        <li>Blogueiros que querem distribuir posts automaticamente via RSS</li>
+        <li>Pequenas e médias empresas que gerenciam marketing visual</li>
+        <li>Profissionais de marketing digital que gerenciam múltiplos Pins</li>
+      </ul>
+    </div>
+
+    <div class="info-box green">
+      <strong>✅ Uso exclusivo pelo dono da conta</strong><br>
+      O PinFlow nunca publica conteúdo sem ação direta ou configuração prévia do usuário autenticado. Não há acesso a contas de terceiros.
+    </div>
+
+    <div class="info-box red">
+      <strong>🚫 O que o PinFlow NÃO faz</strong><br>
+      O app não vende, compartilha ou monetiza dados da conta Pinterest. Não realiza ações automatizadas além das configuradas explicitamente pelo usuário. Não acessa mensagens privadas nem dados financeiros.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     POLÍTICA DE PRIVACIDADE
+════════════════════════════════════════ -->
+<div class="section" id="sec-politica">
+  <div class="container">
+    <div class="page-hero">
+      <div class="page-eyebrow">🔒 Política de Privacidade</div>
+      <h1>Como tratamos seus dados</h1>
+      <p>Esta política descreve quais informações o PinFlow coleta, como as utiliza e como as protege.</p>
+    </div>
+
+    <div class="doc-section">
+      <h2>📄 1. Informações Coletadas</h2>
+      <p>O PinFlow coleta apenas as informações necessárias para seu funcionamento:</p>
+      <ul>
+        <li><strong>Credenciais de API:</strong> App ID, App Secret e Access Token do Pinterest, armazenados localmente no seu navegador (localStorage). Esses dados nunca são enviados a servidores externos além da própria API do Pinterest.</li>
+        <li><strong>Conteúdo de Pins:</strong> títulos, descrições, imagens e links que você insere para publicação. Esses dados são processados localmente e enviados diretamente à API do Pinterest.</li>
+        <li><strong>Configurações de uso:</strong> preferências de horário, fuso horário e fontes RSS, armazenadas localmente no seu navegador.</li>
+      </ul>
+    </div>
+
+    <div class="doc-section">
+      <h2>💾 2. Onde os Dados são Armazenados</h2>
+      <p>Todos os dados do PinFlow são armazenados <strong>exclusivamente no seu dispositivo</strong>, via <code>localStorage</code> do navegador. O PinFlow não possui banco de dados próprio nem servidor de backend.</p>
+      <div class="info-box green">
+        <strong>✅ Sem servidor próprio</strong><br>
+        O PinFlow é um app 100% client-side (roda no seu navegador). Seus dados não passam por nenhum servidor intermediário além da API oficial do Pinterest.
+      </div>
+    </div>
+
+    <div class="doc-section">
+      <h2>🔗 3. Compartilhamento de Dados</h2>
+      <p>O PinFlow <strong>não compartilha, vende ou transfere</strong> seus dados pessoais para terceiros. As únicas transmissões de dados realizadas são:</p>
+      <ul>
+        <li>Envio de Pins diretamente para a <strong>API oficial do Pinterest</strong>, conforme ação do usuário</li>
+        <li>Geração de texto via <strong>API da Anthropic (Claude)</strong> quando o Gerador IA é utilizado — apenas o prompt descrito pelo usuário é enviado, sem dados pessoais</li>
+      </ul>
+    </div>
+
+    <div class="doc-section">
+      <h2>🤖 4. Uso de Inteligência Artificial</h2>
+      <p>O recurso "Gerador IA" utiliza a API da Anthropic para criar sugestões de título, descrição e hashtags. Ao usar esta funcionalidade:</p>
+      <ul>
+        <li>Apenas o texto do prompt (tema do Pin) é enviado à Anthropic</li>
+        <li>Nenhuma imagem, credencial ou dado pessoal é transmitido</li>
+        <li>A Anthropic possui sua própria <a href="https://www.anthropic.com/privacy" target="_blank" style="color:var(--pin-red)">política de privacidade</a></li>
+      </ul>
+    </div>
+
+    <div class="doc-section">
+      <h2>🔑 5. Segurança das Credenciais</h2>
+      <p>As credenciais da API do Pinterest (App Secret e Access Token) são sensíveis. Recomendamos:</p>
+      <ul>
+        <li>Não compartilhar o acesso ao dispositivo onde o PinFlow está configurado</li>
+        <li>Revogar o Access Token no painel do Pinterest caso suspeite de uso indevido</li>
+        <li>Usar o app somente em dispositivos pessoais e de confiança</li>
+      </ul>
+    </div>
+
+    <div class="doc-section">
+      <h2>🧹 6. Exclusão de Dados</h2>
+      <p>Para remover todos os dados armazenados pelo PinFlow do seu dispositivo, basta limpar o <code>localStorage</code> do navegador:</p>
+      <ul>
+        <li>No Chrome: Configurações → Privacidade → Limpar dados de navegação → Dados de sites</li>
+        <li>No Firefox: Configurações → Privacidade → Limpar dados → Dados de sites</li>
+        <li>Ou acesse o Console do navegador (F12) e execute: <code>localStorage.clear()</code></li>
+      </ul>
+    </div>
+
+    <div class="doc-section">
+      <h2>📅 7. Alterações nesta Política</h2>
+      <p>Esta política pode ser atualizada para refletir mudanças no funcionamento do app ou em requisitos legais. A data de atualização sempre será indicada no topo da página. O uso continuado do PinFlow após alterações implica concordância com a versão vigente.</p>
+    </div>
+
+    <div class="doc-section">
+      <h2>📬 8. Contato</h2>
+      <p>Em caso de dúvidas sobre esta política ou sobre o tratamento dos seus dados, entre em contato:</p>
+      <div class="contact-card">
+        <div class="contact-icon">✉️</div>
+        <div>
+          <div class="contact-label">E-mail de contato</div>
+          <div class="contact-value">contato@pinflow.app</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>Última atualização:</strong> junho de 2025 · Esta política está em conformidade com a <strong>LGPD</strong> (Lei Geral de Proteção de Dados — Lei nº 13.709/2018) e com os <strong>Termos de Uso da API do Pinterest</strong>.
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2025 PinFlow · <span onclick="showSection('finalidade')" style="cursor:pointer;color:var(--pin-red)">Finalidade</span> · <span onclick="showSection('politica')" style="cursor:pointer;color:var(--pin-red)">Política de Privacidade</span>
+</footer>
+
+<script>
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    const idx = id === 'finalidade' ? 0 : 1;
+    document.querySelectorAll('.page-tab')[idx].classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
